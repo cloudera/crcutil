@@ -48,14 +48,14 @@ void Show(const crcutil_interface::CRC *crc) {
   //
   uint64 lo;
   crc->GeneratingPolynomial(&lo);
-  xprintf("Generating polynomial 0x%llx, degree %llu",
+  xprintf("Generating polynomial 0x%lx, degree %lu",
           lo,
           static_cast<uint64>(crc->Degree()));
   crc->CanonizeValue(&lo);
-  xprintf(", canonize_value=0x%llx", lo);
+  xprintf(", canonize_value=0x%lx", lo);
 
   crc->RollStartValue(&lo);
-  xprintf(", roll start value=0x%llx, roll window=%llu",
+  xprintf(", roll start value=0x%lx, roll window=%lu",
           lo,
           static_cast<uint64>(crc->RollWindowBytes()));
 
@@ -63,23 +63,23 @@ void Show(const crcutil_interface::CRC *crc) {
   // Check integrity of CRC tables.
   //
   crc->SelfCheckValue(&lo);
-  xprintf(", self check value 0x%llx\n", lo);
+  xprintf(", self check value 0x%lx\n", lo);
 
   //
   // Compute CRC.
   //
   lo = 0;
   crc->Compute(kTestData, sizeof(kTestData) - 1, &lo);
-  xprintf("CRC32C(\"%s\") = 0x%llx\n", kTestData, lo);
+  xprintf("CRC32C(\"%s\") = 0x%lx\n", kTestData, lo);
 
   //
   // Compute CRC (incrementally).
   //
   lo = 0;
   crc->Compute(kTestData, kTestDataHead, &lo);
-  xprintf("CRC32C(\"%.*s\", 0) = 0x%llx, ", kTestDataHead, kTestData, lo);
+  xprintf("CRC32C(\"%.*s\", 0) = 0x%lx, ", kTestDataHead, kTestData, lo);
   crc->Compute(kTestData + kTestDataHead, kTestDataTail, &lo);
-  xprintf("CRC32C(\"%s\", CRC32(\"%.*s\", 0)) = 0x%llx = CRC32(\"%s\")\n",
+  xprintf("CRC32C(\"%s\", CRC32\"%.*s\", 0)) = 0x%lx = CRC32(\"%s\")\n",
       kTestData + kTestDataHead, kTestDataHead, kTestData, lo, kTestData);
 
   //
@@ -91,7 +91,7 @@ void Show(const crcutil_interface::CRC *crc) {
   uint64 lo1 = 1;
   memset(buffer, 0, sizeof(buffer));
   crc->Compute(buffer, sizeof(buffer), &lo1);
-  xprintf("CRC of %d zeroes = %llx, expected %llx\n",
+  xprintf("CRC of %d zeroes = %lx, expected %lx\n",
           static_cast<int>(sizeof(buffer)),
           lo,
           lo1);
@@ -104,15 +104,15 @@ void Show(const crcutil_interface::CRC *crc) {
   for (size_t i = 0; i <= kRollWindow; ++i) {
     crc->RollStartValue(&lo);
     crc->Compute(kTestData + i, kRollWindow, &lo);
-    xprintf(" 0x%llx", lo);
+    xprintf(" 0x%lx", lo);
   }
   xprintf("\n");
 
   crc->RollStart(kTestData, &lo, NULL);
-  xprintf("RollingCrc actual   = 0x%llx", lo);
+  xprintf("RollingCrc actual   = 0x%lx", lo);
   for (size_t i = 1; i <= kRollWindow; ++i) {
     crc->Roll(kTestData[i - 1], kTestData[i - 1 + kRollWindow], &lo, NULL);
-    xprintf(" 0x%llx", lo);
+    xprintf(" 0x%lx", lo);
   }
   xprintf("\n");
 
@@ -128,7 +128,7 @@ void Show(const crcutil_interface::CRC *crc) {
                         1, 0,   // new start value
                         sizeof(kTestData) - 1,
                         &lo1);
-  xprintf("CRC(\"%s\", 0) = 0x%llx, CRC(\"%s\", 1)=0x%llx, expected 0x%llx\n",
+  xprintf("CRC(\"%s\", 0) = 0x%lx, CRC(\"%s\", 1)=0x%lx, expected 0x%lx\n",
       kTestData, lo, kTestData, lo1, lo1_expected);
 
   //
@@ -146,8 +146,8 @@ void Show(const crcutil_interface::CRC *crc) {
   uint64 lo2_expected = start_value;
   crc->Compute(kTestData, sizeof(kTestData) - 1, &lo2_expected);
 
-  xprintf("CRC(\"%.*s\", 1) = 0x%llx, CRC(\"%s\", 0)=0x%llx, "
-         "CRC(\"%s\", 1) = 0x%llx, expected 0x%llx\n",
+  xprintf("CRC(\"%.*s\", 1) = 0x%lx, CRC(\"%s\", 0)=0x%lx, "
+         "CRC(\"%s\", 1) = 0x%lx, expected 0x%lx\n",
          kTestDataHead, kTestData, lo,
          kTestData + kTestDataHead, lo1,
          kTestData, lo2,
@@ -170,7 +170,7 @@ void Show(const crcutil_interface::CRC *crc) {
   lo1 = 1;
   crc->Compute(buffer, sizeof(kTestData) - 1 + stored_crc_bytes, &lo1);
 
-  xprintf("Crc of message + complementary CRC = %llx, expected 0\n", lo1);
+  xprintf("Crc of message + complementary CRC = %lx, expected 0\n", lo1);
 
   //
   // Store CRC after the message and ensure that CRC of message + its
@@ -188,7 +188,7 @@ void Show(const crcutil_interface::CRC *crc) {
   // Ensure that it matches "predicted" constant value, irrespective
   // of a message or CRC start value.
   crc->CrcOfCrc(&lo2);
-  xprintf("CrcOfCrc=%llx, expected %llx\n", lo1, lo2);
+  xprintf("CrcOfCrc=%lx, expected %lx\n", lo1, lo2);
 
   xprintf("\n");
 }

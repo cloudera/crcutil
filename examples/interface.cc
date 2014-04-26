@@ -304,4 +304,13 @@ CRC *CRC::Create(UINT64 poly_lo,
       allocated_memory);
 }
 
+CRC *CRC::CreateCrc32c(bool canonical,
+                       UINT64 roll_start_value_lo,
+                       size_t roll_window_bytes,
+                       const void **allocated_memory) {
+  return Create(Crc32cSSE4::FixedGeneratingPolynomial(), 0, Crc32cSSE4::FixedDegree(),
+                canonical, roll_start_value_lo, 0, roll_window_bytes, IsSSE42Available(),
+                allocated_memory);
+}
+
 }  // namespace crcutil_interface

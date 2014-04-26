@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 
 # See http://mij.oltrelinux.com/devel/autoconf-automake/
 
@@ -43,7 +43,8 @@ echo "Generating preliminary configure.ac"
 autoscan
 
 sed 's/^AC_INIT(.*$/AC_INIT(crcutil, 1.0, crcutil@googlegroups.com)\
-AM_INIT_AUTOMAKE(crcutil, 1.0)\
+AM_INIT_AUTOMAKE([foreign -Wall -Werror])\
+AC_PROG_RANLIB() \
 AC_CONFIG_FILES([Makefile]) \
 AC_OUTPUT()/' configure.scan >configure.ac
 
@@ -62,8 +63,13 @@ echo "Generating ${target}"
 echo>${target} "AUTOMAKE_OPTIONS=foreign"
 
 # --pedantic -std=c99?
-crcutil_flags="-DCRCUTIL_USE_MM_CRC32=1 -Wall -msse2 -Icode"
-echo>${target} "AM_CXXFLAGS=${crcutil_flags}"
+crcutil_flags="-DCRCUTIL_USE_MM_CRC32=1 -Wall -msse2 -Icode -Iexamples -Itests -fPIC"
+crcutil_flags="${crcutil_flags} -O3"
+if [[ "$(c++ -dumpversion)" > "4.4.9" ]]; then
+  crcutil_flags="${crcutil_flags} -mcrc32"
+fi
+
+echo>>${target} "AM_CXXFLAGS=${crcutil_flags}"
 if [ "$(uname -a | grep ^Darwin)" == "" ] && [[ "$(c++ -dumpversion)" > "4.4.9" ]]; then
   # Static linking is not supported on Mac OS X.
   # Use static linking on Linux, otherwise GCC 4.5.0 linker produces
@@ -76,35 +82,32 @@ echo>>${target} "TESTS=crcutil_ut"
 sources=$(ls tests/*.cc tests/*.c tests/*.h code/*.cc code/*.h | grep -v intrinsic | tr "\n" " ")
 echo>>${target} "crcutil_ut_SOURCES=${sources}"
 
-echo>>${target} "tmpdir=/tmp"
-echo>>${target} "tmp_PROGRAMS=usage"
+# Don't install the crcutil "usage" example program.
+echo>>${target} "noinst_PROGRAMS=usage"
 echo>>${target} 'usage_CXXFLAGS=$(AM_CXXFLAGS) -Itests'
 sources=$(ls examples/*.cc examples/*.h code/*.cc code/*.h tests/aligned_alloc.h | grep -v intrinsic | tr "\n" " ")
 echo>>${target} "usage_SOURCES=${sources}"
+
+# Build a static library.
+echo>>${target} "lib_LIBRARIES=libcrcutil.a"
+libsources=$(ls examples/interface.cc examples/interface.h code/*.cc code/*.h tests/aligned_alloc.h | grep -v intrinsic | tr "\n" " ")
+echo>>${target} "libcrcutil_a_SOURCES=${libsources}"
+echo>>${target} "crcutilhdrsdir=\$(includedir)/crcutil"
+echo>>${target} "crcutilhdrs_HEADERS=examples/interface.h"
 
 echo "Creating Makefile.in"
 aclocal
 automake --add-missing
 autoconf
 
-cflags="-O3"
-if [[ "$(c++ -dumpversion)" > "4.4.9" ]]; then
-  cflags="${cflags} -mcrc32"
-fi
-
-cflags="${cflags} $2"
-
-./configure CXXFLAGS="${cflags}" CFLAGS="${cflags}"
-
 echo ""
-echo "Configured the library. Compiler flags:"
-echo "  ${cflags}"
+echo "Configured the library."
 echo "Library configuration flags:"
 echo "  ${crcutil_flags}"
+echo "You may now run ./configure && make && make install"
 echo ""
 
-if [ "${1}" == "configure" ]; then
-  exit
-fi
+exit 0
 
-make $1
+#./configure CXXFLAGS="${cflags}" CFLAGS="${cflags}"
+#make $1

@@ -34,12 +34,13 @@
 #ifndef CRCUTIL_INTERFACE_H_
 #define CRCUTIL_INTERFACE_H_
 
-#include "std_headers.h"    // size_t
+#include <stdint.h> // for uint64_t
+#include <stdlib.h> // for size_t
 
 namespace crcutil_interface {
 
 // Many projects define their own uint64. Do it here.
-typedef unsigned long long UINT64;
+typedef uint64_t UINT64;
 
 class CRC {
  public:
@@ -68,6 +69,15 @@ class CRC {
                      size_t roll_window_bytes,
                      bool use_sse4_2,
                      const void **allocated_memory);
+
+  // Creates a new instance of CRC32C, which is hardware-accelerated on
+  // Nehalem and newer Intel processors. The poly and degree are fixed,
+  // roll_start_value_hi must be 0, and SSE 4.2 is auto-detected.
+  // See above for the rest of the params.
+  static CRC *CreateCrc32c(bool canonical,
+                           UINT64 roll_start_value_lo,
+                           size_t roll_window_bytes,
+                           const void **allocated_memory);
 
   // Deletes the instance of CRC class.
   virtual void Delete() = 0;
