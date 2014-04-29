@@ -43,7 +43,7 @@ echo "Generating preliminary configure.ac"
 autoscan
 
 sed 's/^AC_INIT(.*$/AC_INIT(crcutil, 1.0, crcutil@googlegroups.com)\
-AM_INIT_AUTOMAKE([foreign -Wall -Werror])\
+AM_INIT_AUTOMAKE([foreign subdir-objects])\
 AC_PROG_RANLIB() \
 AC_CONFIG_FILES([Makefile]) \
 AC_OUTPUT()/' configure.scan >configure.ac
