@@ -2,6 +2,22 @@ Since crcutil is a library, and rather small, template library,
 it is better to compile it directly into your code. Or you could
 build a library for interface.cc and use it.
 
+Building (updated)
+------------------
+
+./autogen.sh
+./configure
+./make
+
+Simple test
+-----------
+
+./usage
+
+===============================================================================
+Kudu note: The below instructions are out of date but kept for informational
+purposes.
+===============================================================================
 
 Building and running the tests (Linux/GCC, MacOSX/GCC)
 ------------------------------------------------------
