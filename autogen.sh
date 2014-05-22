@@ -39,6 +39,20 @@ if [ "${1}" == "clean" ]; then
   exit
 fi
 
+CXX="${CXX:-g++}"
+CXX=$(which "$CXX")
+if [ ! -x "$CXX" ]; then
+  echo "Error: cannot find C++: $CXX"
+  exit 1
+fi
+
+CXX_VERSION=$($CXX --version | head -1)
+IS_GCC=0
+echo $CXX_VERSION | grep -q "g++" && IS_GCC=1
+IS_CLANG=0
+echo $CXX_VERSION | grep -q "clang" && IS_CLANG=1
+
+
 echo "Generating preliminary configure.ac"
 autoscan
 
@@ -65,12 +79,14 @@ echo>${target} "AUTOMAKE_OPTIONS=foreign"
 # --pedantic -std=c99?
 crcutil_flags="-DCRCUTIL_USE_MM_CRC32=1 -Wall -msse2 -Icode -Iexamples -Itests -fPIC"
 crcutil_flags="${crcutil_flags} -O3"
-if [[ "$(c++ -dumpversion)" > "4.4.9" ]]; then
+if [[ "$IS_GCC" = "1" && "$(${CXX} -dumpversion)" > "4.4.9" ]]; then
   crcutil_flags="${crcutil_flags} -mcrc32"
+elif [[ "$IS_CLANG" = "1" ]]; then
+  crcutil_flags="${crcutil_flags} -msse4.2"
 fi
 
 echo>>${target} "AM_CXXFLAGS=${crcutil_flags}"
-if [ "$(uname -a | grep ^Darwin)" == "" ] && [[ "$(c++ -dumpversion)" > "4.4.9" ]]; then
+if [ "$(uname -a | grep ^Darwin)" == "" ] && [[ "$(${CXX} -dumpversion)" > "4.4.9" ]]; then
   # Static linking is not supported on Mac OS X.
   # Use static linking on Linux, otherwise GCC 4.5.0 linker produces
   # obscure warning (well, the code works but nevertheless).
