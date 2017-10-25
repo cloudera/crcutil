@@ -47,8 +47,6 @@ if [ ! -x "$CXX" ]; then
 fi
 
 CXX_VERSION=$($CXX --version | head -1)
-IS_GCC=0
-echo $CXX_VERSION | grep -q "g++" && IS_GCC=1
 IS_CLANG=0
 echo $CXX_VERSION | grep -q "clang" && IS_CLANG=1
 
@@ -87,7 +85,7 @@ echo>${target} "ACLOCAL_AMFLAGS=-I m4"
 # --pedantic -std=c99?
 crcutil_flags="-DCRCUTIL_USE_MM_CRC32=1 -Wall -msse2 -Icode -Iexamples -Itests"
 crcutil_flags="${crcutil_flags} -O3"
-if [[ "$IS_GCC" = "1" && "$(${CXX} -dumpversion)" > "4.4.9" ]]; then
+if [[ "$IS_CLANG" = "0" && "$(${CXX} -dumpversion)" > "4.4.9" ]]; then
   crcutil_flags="${crcutil_flags} -mcrc32"
 elif [[ "$IS_CLANG" = "1" ]]; then
   crcutil_flags="${crcutil_flags} -msse4.2"
