@@ -18,7 +18,7 @@
 
 #include "crc32c_sse4.h"
 
-#if HAVE_I386 || HAVE_AMD64
+#if HAVE_I386 || HAVE_AMD64 || HAVE_AARCH64
 
 namespace crcutil {
 
@@ -363,4 +363,4 @@ void RollingCrc32cSSE4::Init(const Crc32cSSE4 &crc,
 
 }  // namespace crcutil
 
-#endif  // HAVE_I386 || HAVE_AMD64
+#endif  // HAVE_I386 || HAVE_AMD64 || HAVE_AARCH64

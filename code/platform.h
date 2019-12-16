@@ -45,6 +45,13 @@
 #endif  // defined(__amd64__) || defined(_M_AMD64)
 #endif  // defined(HAVE_AMD64)
 
+#if !defined(HAVE_AARCH64)
+#if defined(__aarch64__)
+#define HAVE_AARCH64 1
+#else
+#define HAVE_AARCH64 0
+#endif  // defined(__aarch64__)
+#endif  // defined(HAVE_AARCH64)
 
 #if !defined(HAVE_PPC64)
 #if defined(__PPC64__)

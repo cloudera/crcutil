@@ -20,7 +20,7 @@
 #include "platform.h"
 #include "base_types.h"
 
-#if CRCUTIL_USE_MM_CRC32 && (HAVE_I386 || HAVE_AMD64)
+#if CRCUTIL_USE_MM_CRC32 && (HAVE_I386 || HAVE_AMD64 || HAVE_AARCH64)
 
 #if defined(_MSC_VER) || defined(__SSE4_2__)
 
@@ -94,6 +94,6 @@ __forceinline uint32 _mm_crc32_u8(uint32 crc, uint8 value) {
 
 #endif
 
-#endif  // CRCUTIL_USE_MM_CRC32 && (HAVE_I386 || HAVE_AMD64)
+#endif  // CRCUTIL_USE_MM_CRC32 && (HAVE_I386 || HAVE_AMD64 || HAVE_AARCH64)
 
 #endif  // CRCUTIL_CRC32C_SSE4_INTRIN_H_
