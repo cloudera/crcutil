@@ -90,6 +90,10 @@ if [[ "$IS_CLANG" = "0" && "$(${CXX} -dumpversion)" > "4.4.9" ]]; then
 elif [[ "$IS_CLANG" = "1" ]]; then
   crcutil_flags="${crcutil_flags} -msse4.2"
 fi
+if [[ "$ARCH_NAME" == "ppc64le" ]]; then
+  crcutil_flags=
+  crcutil_flags="-DCRCUTIL_USE_MM_CRC32=1 -Wall -Icode -Iexamples -Itests -O3"
+fi
 
 echo>>${target} "AM_CXXFLAGS=${crcutil_flags}"
 echo>>${target} 'AM_CFLAGS=$(AM_CXXFLAGS)'

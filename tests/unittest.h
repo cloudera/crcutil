@@ -111,7 +111,7 @@ class GenericCrcTest : public GenericCrc<Crc, TableEntry, Word, kStride> {
   void InitWithCrc32c(const Crc &generating_polynomial,
                       size_t degree,
                       bool constant) {
-    Init(generating_polynomial, degree, constant);
+    this->Init(generating_polynomial, degree, constant);
   }
 
   bool HaveCrc32c() const {

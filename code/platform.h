@@ -46,6 +46,15 @@
 #endif  // defined(HAVE_AMD64)
 
 
+#if !defined(HAVE_PPC64)
+#if defined(__PPC64__)
+#define HAVE_PPC64 1
+#else
+#define HAVE_PPC64 0
+#endif  // defined(__PPC64__)
+#endif  // defined(HAVE_PPC64)
+
+
 #if HAVE_AMD64 || HAVE_I386
 #if defined(_MSC_VER)
 #pragma warning(push)
