@@ -50,6 +50,7 @@ CXX_VERSION=$($CXX --version | head -1)
 IS_CLANG=0
 echo $CXX_VERSION | grep -q "clang" && IS_CLANG=1
 KERNEL_NAME=$(uname -s)
+PROCESSOR=$(uname -p)
 
 if [ ! -d m4 ]; then
   echo "Creating m4 directory"
@@ -84,20 +85,16 @@ echo>${target} "AUTOMAKE_OPTIONS=foreign"
 echo>${target} "ACLOCAL_AMFLAGS=-I m4"
 
 # --pedantic -std=c99?
-crcutil_flags="-DCRCUTIL_USE_MM_CRC32=1 -Wall -msse2 -Icode -Iexamples -Itests"
+crcutil_flags="-DCRCUTIL_USE_MM_CRC32=1 -Wall -Icode -Iexamples -Itests"
 crcutil_flags="${crcutil_flags} -O3"
-if [[ "$IS_CLANG" = "0" && "$(${CXX} -dumpversion)" > "4.4.9" ]]; then
-  crcutil_flags="${crcutil_flags} -mcrc32"
+if [[ "$PROCESSOR" == "ppc64le" ]]; then
+  crcutil_flags="${crcutil_flags}"
+elif [[ "$PROCESSOR" == "aarch64" ]]; then
+  crcutil_flags="${crcutil_flags} -march=armv8-a"
+elif [[ "$IS_CLANG" = "0" && "$(${CXX} -dumpversion)" > "4.4.9" ]]; then
+  crcutil_flags="${crcutil_flags} -msse2 -mcrc32"
 elif [[ "$IS_CLANG" = "1" ]]; then
-  crcutil_flags="${crcutil_flags} -msse4.2"
-fi
-if [[ "$ARCH_NAME" == "ppc64le" ]]; then
-  crcutil_flags=
-  crcutil_flags="-DCRCUTIL_USE_MM_CRC32=1 -Wall -Icode -Iexamples -Itests -O3"
-fi
-
-if [[ "$ARCH_NAME" == "aarch64" ]]; then
-  crcutil_flags="-DCRCUTIL_USE_MM_CRC32=1 -Wall -march=armv8-a -Icode -Iexamples -Itests -O3"
+  crcutil_flags="${crcutil_flags} -msse2 -msse4.2"
 fi
 
 echo>>${target} "AM_CXXFLAGS=${crcutil_flags}"
