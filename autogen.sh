@@ -49,6 +49,7 @@ fi
 CXX_VERSION=$($CXX --version | head -1)
 IS_CLANG=0
 echo $CXX_VERSION | grep -q "clang" && IS_CLANG=1
+KERNEL_NAME=$(uname -s)
 
 if [ ! -d m4 ]; then
   echo "Creating m4 directory"
@@ -125,7 +126,11 @@ echo>>${target} "crcutilhdrsdir=\$(includedir)/crcutil"
 echo>>${target} "crcutilhdrs_HEADERS=examples/interface.h"
 
 echo "Creating Makefile.in"
-libtoolize
+case "$KERNEL_NAME" in
+  Darwin*) glibtoolize ;;
+  *) libtoolize ;;
+esac
+
 aclocal
 automake --add-missing
 autoconf
