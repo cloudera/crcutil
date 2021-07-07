@@ -91,8 +91,27 @@ if [[ "$PROCESSOR" == "ppc64le" ]]; then
   crcutil_flags="${crcutil_flags}"
 elif [[ "$PROCESSOR" == "aarch64" ]]; then
   crcutil_flags="${crcutil_flags} -march=armv8-a"
-elif [[ "$IS_CLANG" = "0" && "$(${CXX} -dumpversion)" > "4.4.9" ]]; then
-  crcutil_flags="${crcutil_flags} -msse2 -mcrc32"
+elif [[ "$IS_CLANG" = "0" ]]; then
+  # Newer GCC versions output just the major version with -dumpversion flag,
+  # but older GCC versions don't even recognize the -dumpfullversion flag which
+  # should be used in newer versions to output major, minor, and patch versions.
+  # But those "newer versions" are newer than GCC 5, so in the context
+  # of comparision with GCC 4.4.9 -dumpversion suffices.
+  version="$(${CXX} -dumpversion)"
+  ver_major=$(echo $version | cut -d . -f 1)
+  if [ -z "$ver_major" ]; then
+    echo "could not determine GCC major version"
+    exit 1
+  fi
+  ver_minor=$(echo $version | cut -d . -f 2 -s)
+  ver_minor=${ver_minor:-0}
+  ver_patch=$(echo $version | cut -d . -f 3 -s)
+  ver_patch=${ver_patch:-0}
+  # For simplicity, compare the versions using the lexicographical ordering.
+  ver_str=$(printf %03d.%03d.%03d $ver_major $ver_minor $ver_patch)
+  if [[ "$ver_str" > "004.004.009" ]]; then
+    crcutil_flags="${crcutil_flags} -msse2 -mcrc32"
+  fi
 elif [[ "$IS_CLANG" = "1" ]]; then
   crcutil_flags="${crcutil_flags} -msse2 -msse4.2"
 fi
