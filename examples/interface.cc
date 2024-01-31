@@ -268,7 +268,7 @@ CRC *CRC::Create(UINT64 poly_lo,
 #endif  // !HAVE_SSE2
   }
 
-#if CRCUTIL_USE_MM_CRC32 && (HAVE_I386 || HAVE_AMD64 || HAVE_AARCH64)
+#if CRCUTIL_USE_MM_CRC32 && (HAVE_I386 || HAVE_AMD64 || HAVE_AARCH64 || HAVE_LOONGARCH64)
   if (use_sse4_2 &&
       degree == Crc32cSSE4::FixedDegree() &&
       poly_lo == Crc32cSSE4::FixedGeneratingPolynomial() &&
@@ -284,7 +284,7 @@ CRC *CRC::Create(UINT64 poly_lo,
         static_cast<size_t>(roll_length),
         allocated_memory);
   }
-#endif  // CRCUTIL_USE_MM_CRC32 && (HAVE_I386 || HAVE_AMD64 || HAVE_AARCH64)
+#endif  // CRCUTIL_USE_MM_CRC32 && (HAVE_I386 || HAVE_AMD64 || HAVE_AARCH64 || HAVE_LOONGARCH64)
 
   if (poly_hi != 0 || (degree != 64 && (poly_lo >> degree) != 0)) {
     return NULL;

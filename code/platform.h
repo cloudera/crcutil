@@ -53,6 +53,14 @@
 #endif  // defined(__aarch64__)
 #endif  // defined(HAVE_AARCH64)
 
+#if !defined(HAVE_LOONGARCH64)
+#if defined(__loongarch64)
+#define HAVE_LOONGARCH64 1
+#else
+#define HAVE_LOONGARCH64 0
+#endif  // defined(__loongarch64)
+#endif  // defined(HAVE_LOONGARCH64)
+
 #if !defined(HAVE_PPC64)
 #if defined(__PPC64__)
 #define HAVE_PPC64 1
