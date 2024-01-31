@@ -91,6 +91,8 @@ if [[ "$PROCESSOR" == "ppc64le" ]]; then
   crcutil_flags="${crcutil_flags}"
 elif [[ "$PROCESSOR" == "aarch64" ]]; then
   crcutil_flags="${crcutil_flags} -march=armv8-a"
+elif [[ "$PROCESSOR" == "loongarch64" ]]; then
+  crcutil_flags="${crcutil_flags} -march=loongarch64"
 elif [[ "$IS_CLANG" = "0" ]]; then
   # Newer GCC versions output just the major version with -dumpversion flag,
   # but older GCC versions don't even recognize the -dumpfullversion flag which
