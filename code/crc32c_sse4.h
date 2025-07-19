@@ -22,7 +22,7 @@
 #include "gf_util.h"              // base types, gf_util class, etc.
 #include "crc32c_sse4_intrin.h"   // _mm_crc32_u* intrinsics
 
-#if HAVE_I386 || HAVE_AMD64 || HAVE_PPC64 || HAVE_AARCH64
+#if HAVE_I386 || HAVE_AMD64 || HAVE_PPC64 || HAVE_AARCH64 || HAVE_LOONGARCH64
 
 #if CRCUTIL_USE_MM_CRC32
 
@@ -247,6 +247,6 @@ class RollingCrc32cSSE4 {
 
 }  // namespace crcutil
 
-#endif  // HAVE_I386 || HAVE_AMD64 || HAVE_PPC64 || HAVE_AARCH64
+#endif  // HAVE_I386 || HAVE_AMD64 || HAVE_PPC64 || HAVE_AARCH64 || HAVE_LOONGARCH64
 
 #endif  // CRCUTIL_CRC32C_SSE4_H_
