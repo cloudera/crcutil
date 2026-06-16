@@ -50,7 +50,7 @@ CXX_VERSION=$($CXX --version | head -1)
 IS_CLANG=0
 echo $CXX_VERSION | grep -q "clang" && IS_CLANG=1
 KERNEL_NAME=$(uname -s)
-PROCESSOR=$(uname -p)
+ARCH_NAME=$(uname -m)
 
 if [ ! -d m4 ]; then
   echo "Creating m4 directory"
@@ -87,11 +87,11 @@ echo>${target} "ACLOCAL_AMFLAGS=-I m4"
 # --pedantic -std=c99?
 crcutil_flags="-DCRCUTIL_USE_MM_CRC32=1 -Wall -Icode -Iexamples -Itests"
 crcutil_flags="${crcutil_flags} -O3"
-if [[ "$PROCESSOR" == "ppc64le" ]]; then
+if [[ "$ARCH_NAME" == "ppc64le" ]]; then
   crcutil_flags="${crcutil_flags}"
-elif [[ "$PROCESSOR" == "aarch64" ]]; then
+elif [[ "$ARCH_NAME" == "aarch64" ]]; then
   crcutil_flags="${crcutil_flags} -march=armv8-a"
-elif [[ "$PROCESSOR" == "loongarch64" ]]; then
+elif [[ "$ARCH_NAME" == "loongarch64" ]]; then
   crcutil_flags="${crcutil_flags} -march=loongarch64"
 elif [[ "$IS_CLANG" = "0" ]]; then
   # Newer GCC versions output just the major version with -dumpversion flag,
